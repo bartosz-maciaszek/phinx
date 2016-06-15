@@ -28,8 +28,9 @@
  */
 namespace Phinx\Migration;
 
-use Phinx\Db\Table;
 use Phinx\Db\Adapter\AdapterInterface;
+use Phinx\Db\Table;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -60,15 +61,24 @@ abstract class AbstractMigration implements MigrationInterface
     protected $output;
 
     /**
+     * @var InputInterface
+     */
+    protected $input;
+
+    /**
      * Class Constructor.
      *
      * @param int                  $version Migration Version
+     * @param InputInterface|null  $input
      * @param OutputInterface|null $output
      */
-    final public function __construct($version, OutputInterface $output = null)
+    final public function __construct($version, InputInterface $input = null, OutputInterface $output = null)
     {
         $this->version = $version;
-        if (!is_null($output)){
+        if (!is_null($input)) {
+            $this->setInput($input);
+        }
+        if (!is_null($output)) {
             $this->setOutput($output);
         }
 
@@ -104,6 +114,7 @@ abstract class AbstractMigration implements MigrationInterface
     public function setAdapter(AdapterInterface $adapter)
     {
         $this->adapter = $adapter;
+
         return $this;
     }
 
@@ -118,9 +129,28 @@ abstract class AbstractMigration implements MigrationInterface
     /**
      * {@inheritdoc}
      */
+    public function setInput(InputInterface $input)
+    {
+        $this->input = $input;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getInput()
+    {
+        return $this->input;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
+
         return $this;
     }
 
@@ -146,6 +176,7 @@ abstract class AbstractMigration implements MigrationInterface
     public function setVersion($version)
     {
         $this->version = $version;
+
         return $this;
     }
 
@@ -198,6 +229,7 @@ abstract class AbstractMigration implements MigrationInterface
         if (is_string($table)) {
             $table = new Table($table, array(), $this->getAdapter());
         }
+
         return $table->insert($data)->save();
     }
 

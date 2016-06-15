@@ -2,6 +2,10 @@
 
 namespace Test\Phinx\Console\Command;
 
+use Phinx\Config\ConfigInterface;
+use Phinx\Console\PhinxApplication;
+use Phinx\Migration\Manager;
+use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Console\Output\StreamOutput;
 use Phinx\Config\Config;
@@ -9,6 +13,9 @@ use Phinx\Console\Command\Create;
 
 class CreateTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var ConfigInterface|array
+     */
     protected $config = array();
 
     protected function setUp()
@@ -38,16 +45,18 @@ class CreateTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteWithDuplicateMigrationNames()
     {
-        $application = new \Phinx\Console\PhinxApplication('testing');
+        $application = new PhinxApplication('testing');
         $application->add(new Create());
 
         // setup dependencies
+        $input = new ArrayInput([]);
         $output = new StreamOutput(fopen('php://memory', 'a', false));
 
+        /** @var Create $command $command */
         $command = $application->find('create');
 
-        // mock the manager class
-        $managerStub = $this->getMock('\Phinx\Migration\Manager', array(), array($this->config, $output));
+        /** @var Manager $managerStub mock the manager class */
+        $managerStub = $this->getMock('\Phinx\Migration\Manager', array(), array($this->config, $input, $output));
 
         $command->setConfig($this->config);
         $command->setManager($managerStub);
@@ -65,16 +74,18 @@ class CreateTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupplyingBothClassAndTemplateAtCommandLineThrowsException()
     {
-        $application = new \Phinx\Console\PhinxApplication('testing');
+        $application = new PhinxApplication('testing');
         $application->add(new Create());
 
         // setup dependencies
+        $input = new ArrayInput([]);
         $output = new StreamOutput(fopen('php://memory', 'a', false));
 
+        /** @var Create $command $command */
         $command = $application->find('create');
 
-        // mock the manager class
-        $managerStub = $this->getMock('\Phinx\Migration\Manager', array(), array($this->config, $output));
+        /** @var Manager $managerStub mock the manager class */
+        $managerStub = $this->getMock('\Phinx\Migration\Manager', array(), array($this->config, $input, $output));
 
         $command->setConfig($this->config);
         $command->setManager($managerStub);
@@ -89,16 +100,18 @@ class CreateTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupplyingBothClassAndTemplateInConfigThrowsException()
     {
-        $application = new \Phinx\Console\PhinxApplication('testing');
+        $application = new PhinxApplication('testing');
         $application->add(new Create());
 
         // setup dependencies
+        $input = new ArrayInput([]);
         $output = new StreamOutput(fopen('php://memory', 'a', false));
 
+        /** @var Create $command $command */
         $command = $application->find('create');
 
-        // mock the manager class
-        $managerStub = $this->getMock('\Phinx\Migration\Manager', array(), array($this->config, $output));
+        /** @var Manager $managerStub mock the manager class */
+        $managerStub = $this->getMock('\Phinx\Migration\Manager', array(), array($this->config, $input, $output));
 
         $this->config['templates'] = array(
             'file' => 'MyTemplate',
