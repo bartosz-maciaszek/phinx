@@ -71,8 +71,8 @@ class PostgresAdapter extends PdoAdapter implements AdapterInterface
                 $db = new \PDO($dsn, $options['user'], $options['pass'], array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION));
             } catch (\PDOException $exception) {
                 throw new \InvalidArgumentException(sprintf(
-                    'There was a problem connecting to the database: %s'
-                    , $exception->getMessage()
+                    'There was a problem connecting to the database: %s',
+                    $exception->getMessage()
                 ));
             }
 
@@ -1020,7 +1020,7 @@ class PostgresAdapter extends PdoAdapter implements AdapterInterface
     {
         $constraintName = $foreignKey->getConstraint() ?: $tableName . '_' . implode('_', $foreignKey->getColumns());
         $def = ' CONSTRAINT "' . $constraintName . '" FOREIGN KEY ("' . implode('", "', $foreignKey->getColumns()) . '")';
-        $def .= " REFERENCES {$foreignKey->getReferencedTable()->getName()} (\"" . implode('", "', $foreignKey->getReferencedColumns()) . '")';
+        $def .= " REFERENCES {$this->quoteTableName($foreignKey->getReferencedTable()->getName())} (\"" . implode('", "', $foreignKey->getReferencedColumns()) . '")';
         if ($foreignKey->getOnDelete()) {
             $def .= " ON DELETE {$foreignKey->getOnDelete()}";
         }
